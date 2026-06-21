@@ -11,6 +11,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.HexFormat;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -18,6 +19,9 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+
+import javax.swing.tree.TreeNode;
+
 
 public class Pr{
 
@@ -286,5 +290,121 @@ public class Pr{
         return response;
 
     }
+
+    public int[] topKFrequent2(int[] nums, int k){
+        Map<Integer, Integer> freq = new HashMap<>();
+        for(int i=0; i<nums.length; i++){
+            freq.put(nums[i], freq.getOrDefault(nums[i], 0) + 1);
+        }
+
+        Queue<Integer> prq = new PriorityQueue<>((a, b) -> freq.get(b) - freq.get(a));
+        for(int num : freq.keySet()){
+            prq.add(num);
+        }
+
+        int[] numsTopK = new int[k];
+        for(int i=0; i<k; i++)
+            numsTopK[i] = prq.poll(); 
+        
+        return numsTopK;
+    }    
+
+    // 102. Binary Tree Level Order Traversal
+    // Given the root of a binary tree, return the level order traversal of its nodes' values
+    public List<List<Integer>> levelOrder(TreeNode root){
+
+        List<List<Integer>> outputList = new ArrayList<>();
+        if(root == null) return outputList;
+
+        Queue<TreeNode> queue = new LinkedList<>();
+
+        queue.add(root);
+
+        while(!queue.isEmpty()){
+            int levelSize = queue.size();
+            List<Integer> level = new ArrayList<>();
+            for(int i=0; i<levelSize; i++){
+                TreeNode current = queue.poll();
+                level.add(current.val);
+                if(current.left != null)
+                    queue.add(current.left);
+                if(current.right != null)
+                    queue.add(current.right);
+            }
+            outputList.add(level);
+        }
+
+        return outputList;
+
+    }
+
+    // 104. Maximum Depth of Binary Tree
+    // Given the root of a binary tree, return its maximum depth
+    // A binary tree's maximum depth is the number of nodes along the longest path from the root 
+    // node down to the farthest leaf nod
+    public int maxDepthBFS(TreeNode root) {
+
+        if(root == null)
+            return 0;
+
+        Queue<TreeNode> queue = new LinkedList<>();
+        int count = 0;
+        
+        queue.add(root);
+
+        while(!queue.isEmpty()){
+            int levelSize = queue.size();
+            for(int i=0; i<levelSize; i++){
+                TreeNode current = queue.poll();
+                if(current.right != null)
+                    queue.add(current.right);
+                if(current.left != null)
+                    queue.add(current.left);
+                
+            }
+            count++;
+        }
+
+        return count;
+    }
+
+    public int maxDepthDFS(TreeNode root) {
+        if (root == null) return 0;  
+
+        int leftDepth = maxDepthDFS(root.left);    
+        int rightDepth = maxDepthDFS(root.right);  
+        return 1 + Math.max(leftDepth, rightDepth);
+    }
+
+    // 226. Invert Binary Tree
+    // Given the root of a binary tree, invert the tree, and return its root
+    public TreeNode invertTree(TreeNode root){
+        if(root == null)
+            return root;
+        
+        TreeNode temp = root.left;
+        root.left = root.right;
+        root.right = temp;
+        
+        invertTree(root.left);
+        invertTree(root.right);
+        
+        return root;
+
+    }
+
+    public class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+        TreeNode() {}
+        TreeNode(int val) { this.val = val; }
+        TreeNode(int val, TreeNode left, TreeNode right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
+    }
+        
 
 }
