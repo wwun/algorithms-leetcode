@@ -175,6 +175,127 @@ public class Pr{
         return outputArray;
     }
 
+    // 100. Same Tree
+    // Given the roots of two binary trees p and q, write a function to check if they are 
+    // the same or not, two binary trees are considered the same if they are structurally 
+    // identical, and the nodes have the same value
+    public boolean isSameTree(TreeNode p, TreeNode q){
+        if(p == null && q == null)
+            return true;
+        if(p == null || q == null)
+            return false;
+        if(p.val != q.val)
+            return false;
+        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right); 
+    }
+
+    // 102. Binary Tree Level Order Traversal
+    // Given the root of a binary tree, return the level order traversal of its nodes' values
+    public List<List<Integer>> levelOrder(TreeNode root){
+
+        List<List<Integer>> outputList = new ArrayList<>();
+        if(root == null) return outputList;
+
+        Queue<TreeNode> queue = new LinkedList<>();
+
+        queue.add(root);
+
+        while(!queue.isEmpty()){
+            int levelSize = queue.size();
+            List<Integer> level = new ArrayList<>();
+            for(int i=0; i<levelSize; i++){
+                TreeNode current = queue.poll();
+                level.add(current.val);
+                if(current.left != null)
+                    queue.add(current.left);
+                if(current.right != null)
+                    queue.add(current.right);
+            }
+            outputList.add(level);
+        }
+
+        return outputList;
+
+    }
+
+    // 104. Maximum Depth of Binary Tree
+    // Given the root of a binary tree, return its maximum depth
+    // A binary tree's maximum depth is the number of nodes along the longest path from the root 
+    // node down to the farthest leaf nod
+    public int maxDepthBFS(TreeNode root) {
+
+        if(root == null)
+            return 0;
+
+        Queue<TreeNode> queue = new LinkedList<>();
+        int count = 0;
+        
+        queue.add(root);
+
+        while(!queue.isEmpty()){
+            int levelSize = queue.size();
+            for(int i=0; i<levelSize; i++){
+                TreeNode current = queue.poll();
+                if(current.right != null)
+                    queue.add(current.right);
+                if(current.left != null)
+                    queue.add(current.left);
+                
+            }
+            count++;
+        }
+
+        return count;
+    }
+
+    public int maxDepthDFS(TreeNode root) {
+        if (root == null) return 0;  
+
+        int leftDepth = maxDepthDFS(root.left);    
+        int rightDepth = maxDepthDFS(root.right);  
+        return 1 + Math.max(leftDepth, rightDepth);
+    }
+
+    // 125. Valid Palindrome
+    // Ahrase is a palindrome if, after converting all uppercase letters into lowercase letters 
+    // and removing all non-alphanumeric characters, it reads the same forward and backward, 
+    // alphanumeric characters include letters and numbers, given a string s, return true if it 
+    // is a palindrome, or false otherwise
+    public boolean isPalindrome(String s){
+        int left = 0;
+        int right = s.length() - 1;
+
+        while(left < right){
+            while(left < right && !Character.isLetterOrDigit(s.charAt(left)))
+                left++;
+            while(left < right && !Character.isLetterOrDigit(s.charAt(right)))
+                right--;
+            if(Character.toLowerCase(s.charAt(left)) != Character.toLowerCase(s.charAt(right)))
+                return false;
+            left++;
+            right--;
+        }
+        
+        return true;
+
+    }
+
+    // 167. Two Sum II - Input Array Is Sorted
+    public int[] twoSumII(int[] numbers, int target){
+        int i=0, k=numbers.length-1;
+        while(i<k){
+            int sum = numbers[i]+numbers[k];
+            if(sum==target){
+                return new int[]{ i+1, k+1};
+            }
+            if(sum>target){
+                k--;
+            }else{
+                i++;
+            }
+        }
+        return new int[]{};
+    }    
 
     // 200. Number of Islands (DFS)
     // Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's 
@@ -259,6 +380,92 @@ public class Pr{
         return pq.peek();
     }
 
+    // 217. Contains Duplicate
+    public boolean containsDuplicate(int[] nums){
+        if(nums == null)
+            return false;
+        Set<Integer> duplicates = new HashSet<>();
+        for(int i=0; i<nums.length; i++){
+            if(!duplicates.add(nums[i]))
+                return true;
+        }
+        return false;
+    }
+
+    // 226. Invert Binary Tree
+    // Given the root of a binary tree, invert the tree, and return its root
+    public TreeNode invertTree(TreeNode root){
+        if(root == null)
+            return root;
+        
+        TreeNode temp = root.left;
+        root.left = root.right;
+        root.right = temp;
+        
+        invertTree(root.left);
+        invertTree(root.right);
+        
+        return root;
+
+    }
+
+    public class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+        TreeNode() {}
+        TreeNode(int val) { this.val = val; }
+        TreeNode(int val, TreeNode left, TreeNode right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
+    }
+
+    // 242. Valid Anagram
+    // Given two strings s and t, return true if t is an of s, and false otherwise
+    public boolean isAnagram(String s, String t) {
+        if(s == null || t == null || s.length() != t.length())
+            return false;
+        Map<Character, Integer> original = new HashMap<>();
+        for(int i=0; i<s.length(); i++){
+            original.put(s.charAt(i), original.getOrDefault(s.charAt(i), 0) + 1);
+        }
+        for(int i=0; i<t.length(); i++){
+            char val = t.charAt(i);
+            if(!original.containsKey(val) || original.get(val) == 0)
+                return false;
+            original.put(val, original.get(val) - 1);
+        }
+        return true;
+    }
+
+    // 303. Range Sum Query - Immutable
+    // Given an integer array nums, handle multiple queries of the following type
+    // Calculate the sum of the elements of nums between indices left and right inclusive 
+    // where left <= right
+    // Implement the NumArray class
+    // NumArray(int[] nums) Initializes the object with the integer array nums,
+    // int sumRange(int left, int right) Returns the sum of the elements of nums between 
+    // indices left and right inclusive (i.e. nums[left] + nums[left + 1] + ... + nums[right
+    class NumArray {
+
+        private int[] accumulative;
+        
+
+        public NumArray(int[] nums) {
+            accumulative= new int[nums.length+1];
+            accumulative[0] = 0;
+            for(int i=0; i<nums.length; i++){
+                accumulative[i+1] = accumulative[i] + nums[i];
+            }
+        }
+        
+        public int sumRange(int left, int right) {
+            return accumulative[right + 1] - accumulative[left ];
+        }
+    }
+
     // 347. Top K Frequent Elements
     // Given an integer array nums and an integer k, return the k most frequent elements, you may return the answer in any order
     
@@ -307,104 +514,27 @@ public class Pr{
             numsTopK[i] = prq.poll(); 
         
         return numsTopK;
-    }    
+    }
+    
+    // 704. Binary Search
+    // Given an array of integers nums which is sorted in ascending order, and an integer target, 
+    // write a function to search target in nums, if target exists, then return its index, 
+    // otherwise, return -1
+    // you must write an algorithm with O(log n) runtime complexit
+    public int search(int[] nums, int target) {
+        int start = 0;
+        int end = nums.length - 1;
 
-    // 102. Binary Tree Level Order Traversal
-    // Given the root of a binary tree, return the level order traversal of its nodes' values
-    public List<List<Integer>> levelOrder(TreeNode root){
-
-        List<List<Integer>> outputList = new ArrayList<>();
-        if(root == null) return outputList;
-
-        Queue<TreeNode> queue = new LinkedList<>();
-
-        queue.add(root);
-
-        while(!queue.isEmpty()){
-            int levelSize = queue.size();
-            List<Integer> level = new ArrayList<>();
-            for(int i=0; i<levelSize; i++){
-                TreeNode current = queue.poll();
-                level.add(current.val);
-                if(current.left != null)
-                    queue.add(current.left);
-                if(current.right != null)
-                    queue.add(current.right);
-            }
-            outputList.add(level);
+        while(start <= end){
+            int middle = start + (end - start)/2;
+            if(target == nums[middle])
+                return middle;
+            if(nums[middle] < target)
+                start = middle + 1;
+            else
+                end = middle - 1;
         }
-
-        return outputList;
-
+        return -1;
     }
-
-    // 104. Maximum Depth of Binary Tree
-    // Given the root of a binary tree, return its maximum depth
-    // A binary tree's maximum depth is the number of nodes along the longest path from the root 
-    // node down to the farthest leaf nod
-    public int maxDepthBFS(TreeNode root) {
-
-        if(root == null)
-            return 0;
-
-        Queue<TreeNode> queue = new LinkedList<>();
-        int count = 0;
-        
-        queue.add(root);
-
-        while(!queue.isEmpty()){
-            int levelSize = queue.size();
-            for(int i=0; i<levelSize; i++){
-                TreeNode current = queue.poll();
-                if(current.right != null)
-                    queue.add(current.right);
-                if(current.left != null)
-                    queue.add(current.left);
-                
-            }
-            count++;
-        }
-
-        return count;
-    }
-
-    public int maxDepthDFS(TreeNode root) {
-        if (root == null) return 0;  
-
-        int leftDepth = maxDepthDFS(root.left);    
-        int rightDepth = maxDepthDFS(root.right);  
-        return 1 + Math.max(leftDepth, rightDepth);
-    }
-
-    // 226. Invert Binary Tree
-    // Given the root of a binary tree, invert the tree, and return its root
-    public TreeNode invertTree(TreeNode root){
-        if(root == null)
-            return root;
-        
-        TreeNode temp = root.left;
-        root.left = root.right;
-        root.right = temp;
-        
-        invertTree(root.left);
-        invertTree(root.right);
-        
-        return root;
-
-    }
-
-    public class TreeNode {
-        int val;
-        TreeNode left;
-        TreeNode right;
-        TreeNode() {}
-        TreeNode(int val) { this.val = val; }
-        TreeNode(int val, TreeNode left, TreeNode right) {
-            this.val = val;
-            this.left = left;
-            this.right = right;
-        }
-    }
-        
 
 }
